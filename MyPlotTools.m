@@ -7,10 +7,10 @@
 BeginPackage["MyPlotTools`"]
 
 CreateColorScheme::usage="CreateColorScheme[name,colorlist] generates a continuous color scheme out of the color list, and adds it to the list of schemes under the given name";
-fticksR::usage="fticksR[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
-fticksRodd::usage="fticksR[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
-fticksReven::usage="fticksR[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
-fticksRNoLabels::usage="fticksR[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
+MyFrameTicks::usage="MyFrameTicks[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
+MyFrameTicksOdd::usage="MyFrameTicksOdd[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
+MyFrameTicksEven::usage="MyFrameTicksEven[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
+MyFrameTicksNoLabel::usage="MyFrameTicksNoLabel[min_,max_,AMAX_: 1] a list of fancy logarithmic frame ticks."
 myText::usage="myText[text_,size_:14,color_:Black] creates a string in my text style."
 myFrameTicksStyle::usage="Use in a framed plot via FrameTicksStyle->myFrameTicksStyle."
 
@@ -38,12 +38,10 @@ AppendTo[DataPaclets`ColorDataDump`colorSchemeNames,new[[1,1]]];
 
 Clear[PrettyExp]
 PrettyExp[x_,MAX_: 0]:=If[Abs[x]>=MAX,Superscript[10,x],If[x>=0,10^x,10.^x]]
-Clear[fticksR]
-fticksR[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],{10.^x,PrettyExp[x,AMAX],{.015,0}}],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
-fticksRodd[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],If[OddQ[x],{10.^x,PrettyExp[x,AMAX],{.015,0}},{10.^x,"",{.015,0}}]],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
-fticksReven[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],If[EvenQ[x],{10.^x,PrettyExp[x,AMAX],{.015,0}},{10.^x,"",{.015,0}}]],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
-Clear[fticksRNoLabels]
-fticksRNoLabels[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],{10.^x,"",{.015,0}}],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
+MyFrameTicks[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],{10.^x,PrettyExp[x,AMAX],{.015,0}}],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
+MyFrameTicksOdd[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],If[OddQ[x],{10.^x,PrettyExp[x,AMAX],{.015,0}},{10.^x,"",{.015,0}}]],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
+MyFrameTicksEven[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],If[EvenQ[x],{10.^x,PrettyExp[x,AMAX],{.015,0}},{10.^x,"",{.015,0}}]],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
+MyFrameTicksNoLabel[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^x,"",{.005,0}},{i,2,9}],{1}],{10.^x,"",{.015,0}}],{x,Floor[Log[10,min]],Ceiling[Log[10,max]],1}],1]
 
 
 
@@ -53,18 +51,30 @@ fticksRNoLabels[min_,max_,AMAX_: 1]:=Flatten[Table[Prepend[Flatten[Table[{i*10.^
 
 myText[text_,size_:14,color_:Black]:=Text[Style[text,color,FontFamily->"Carlito",size]]
 myFrameTicksStyle=Directive[Black,12,FontFamily->"Carlito"];
+myFrameTicksStyleWhite=Directive[White,12,FontFamily->"Carlito"];
 
 
 (* ::Chapter:: *)
-(*My Plot Theme*)
+(*My Plot Themes*)
 
 
 Themes`AddThemeRules["myPlotTheme",
+ PlotStyle-> ColorData[97,"ColorList"],
   Frame->True,
+  Axes->False,
   FrameTicksStyle->myFrameTicksStyle,
-  Joined->True,
-  AspectRatio->1/GoldenRatio,
-  ImageSize->400
+  PlotRangePadding->0
+];
+
+
+Themes`AddThemeRules["myPlotThemeWhite",
+ PlotStyle-> ColorData[97,"ColorList"],
+  Frame->True,
+  Axes->False,
+  FrameStyle->White,
+  GridLinesStyle->White,
+  FrameTicksStyle->myFrameTicksStyleWhite,
+  PlotRangePadding->0
 ];
 
 
